@@ -3,7 +3,8 @@
 # VyPRAnalysis, which requires VyPR
 # SampleWebService, which requires VyPR
 
-cd /int-testing/;
+# we may want to use virtual environments for dependencies at some point...
+# at the moment we don't need it, but it's worth considering.
 
 echo "Working in:";
 pwd;
@@ -28,20 +29,23 @@ if [ $# -eq 2 ] && [ "$2" == "refresh" ]; then
 	cd ../SampleWebService;
 	git clone git@github.com:pyvypr/VyPR.git;
 	echo "All cloning is finished.  Running tests.";
-	cd /int-testing/;
-	chmod -R 774 *;
-	chgrp -R vypr-int-testing *;
 else
 	echo "Not pulling code again.  Just running tests."
 fi
+
+# move back to the root of the testing environment
+cd ../;
 
 # we use tmux to manage sessions so we can have the monitored service in one,
 # the VyPR verdict server running in another, and send HTTP requests with curl
 # from a third
 
+# Note: when a tmux session is created, it's starting directory is the current
+# working directory, so we don't have to cd anywhere.
+
 # new detached session for the verdict server
 tmux new -d -s verdict_server;
-tmux send-keys -t verdict_server 'cd /int-testing/VyPRServer/' Enter;
+tmux send-keys -t verdict_server 'cd VyPRServer/' Enter;
 tmux send-keys -t verdict_server 'rm verdicts.db' Enter;
 tmux send-keys -t verdict_server 'sqlite3 verdicts.db < verdict-schema.sql' Enter;
 tmux send-keys -t verdict_server 'python run_service.py' Enter;
@@ -54,7 +58,7 @@ tmux list-sessions;
 
 # new detached session for the monitored program
 tmux new -d -s monitored;
-tmux send-keys -t monitored 'cd /int-testing/SampleWebService/' Enter;
+tmux send-keys -t monitored 'cd SampleWebService/' Enter;
 tmux send-keys -t monitored 'mkdir instrumentation_maps/ binding_spaces/ index_hash/' Enter;
 tmux send-keys -t monitored 'python VyPR/instrument.py' Enter;
 tmux send-keys -t monitored 'python run.py' Enter;

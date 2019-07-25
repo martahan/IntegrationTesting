@@ -29,6 +29,8 @@ if [ $# -eq 2 ] && [ "$2" == "refresh" ]; then
 	git clone git@github.com:pyvypr/VyPR.git;
 	echo "All cloning is finished.  Running tests.";
 	cd /int-testing/;
+	chmod -R 774 *;
+	chgrp -R vypr-int-testing *;
 else
 	echo "Not pulling code again.  Just running tests."
 fi

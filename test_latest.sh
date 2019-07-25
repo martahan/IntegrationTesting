@@ -16,10 +16,22 @@ if [ $# -eq 2 ] && [ "$2" == "refresh" ]; then
 	# clone the new versions
 	echo "Cloning VyPRServer...";
 	git clone git@github.com:$1/VyPRServer.git;
+	if [ ! $? -eq 0 ]; then
+		echo "git pull failed.  Defaulting to pyvypr version."
+		git clone git@github.com:pyvypr/VyPRServer.git;
+	fi
 	echo "Cloning VyPRAnalysis...";
 	git clone git@github.com:$1/VyPRAnalysis.git;
+	if [ ! $? -eq 0 ]; then
+                echo "git pull failed.  Defaulting to pyvypr version."
+		git clone git@github.com:pyvypr/VyPRAnalysis.git;
+        fi
 	echo "Cloning SampleWebService...";
 	git clone git@github.com:$1/SampleWebService.git;
+	if [ ! $? -eq 0 ]; then
+                echo "git pull failed.  Defaulting to pyvypr version."
+		git clone git@github.com:pyvypr/SampleWebService.git;
+        fi
 	echo "Cloning VyPR into VyPRServer, VyPRAnalysis and SampleWebService...";
 	# when we clone VyPR, we always clone from the main repository - there aren't any forks at the moment
 	cd VyPRServer;

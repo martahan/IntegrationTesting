@@ -46,7 +46,7 @@ else
 fi
 
 # move back to the root of the testing environment
-cd ../;
+# cd ../;
 
 # we use tmux to manage sessions so we can have the monitored service in one,
 # the VyPR verdict server running in another, and send HTTP requests with curl
@@ -110,10 +110,13 @@ tmux list-sessions;
 # exit the requests thread
 #tmux send -t requests exit Enter;
 
+
+# all done - time for testing the analysis library...
+cd IntegrationTesting/;
+python run_tests.py;
+echo "Testing finished.";
+
+
 # clean exit of all sessions
 tmux kill-server;
 
-# all done - time for testing the analysis library...
-
-python run_tests.py;
-echo "Testing finished.";

@@ -15,13 +15,15 @@ if [ $# -eq 2 ] && [ "$2" == "refresh" ]; then
 	rm -rf VyPRServer VyPRAnalysis SampleWebService;
 	# clone the new versions
 	echo "Cloning VyPRServer...";
-	git clone git@github.com:$1/VyPRServer.git;
+	#git clone git@github.com:$1/VyPRServer.git;
+	git clone git@github.com:$1/VyPR-server.git;
 	if [ ! $? -eq 0 ]; then
 		echo "git pull failed.  Defaulting to pyvypr version."
 		git clone git@github.com:pyvypr/VyPRServer.git;
 	fi
 	echo "Cloning VyPRAnalysis...";
-	git clone git@github.com:$1/VyPRAnalysis.git;
+	#git clone git@github.com:$1/VyPRAnalysis.git;
+	git clone git@github.com:$1/VyPR-analysis.git;
 	if [ ! $? -eq 0 ]; then
                 echo "git pull failed.  Defaulting to pyvypr version."
 		git clone git@github.com:pyvypr/VyPRAnalysis.git;
@@ -34,20 +36,21 @@ if [ $# -eq 2 ] && [ "$2" == "refresh" ]; then
         fi
 	echo "Cloning VyPR into VyPRServer, VyPRAnalysis and SampleWebService...";
 	# when we clone VyPR, we always clone from the main repository - there aren't any forks at the moment
-	cd VyPRServer;
+	cd VyPR-server;
 	git clone git@github.com:pyvypr/VyPR.git;
-	cd ../VyPRAnalysis;
+	cd ../VyPR-analysis;
 	git clone git@github.com:pyvypr/VyPR.git;
 	cd ../SampleWebService;
 	git clone git@github.com:pyvypr/VyPR.git;
+	cd ../;
+
 	echo "All cloning is finished.  Running tests.";
 else
 	echo "Not pulling code again.  Just running tests."
 fi
 
 # move back to the root of the testing environment
-# cd ../;
-
+pwd;
 # we use tmux to manage sessions so we can have the monitored service in one,
 # the VyPR verdict server running in another, and send HTTP requests with curl
 # from a third
@@ -57,7 +60,7 @@ fi
 
 # new detached session for the verdict server
 tmux new -d -s verdict_server;
-tmux send-keys -t verdict_server 'cd VyPRServer/' Enter;
+tmux send-keys -t verdict_server 'cd VyPR-server/' Enter;
 tmux send-keys -t verdict_server 'rm verdicts.db' Enter;
 tmux send-keys -t verdict_server 'sqlite3 verdicts.db < verdict-schema.sql' Enter;
 tmux send-keys -t verdict_server 'python run_service.py' Enter;
@@ -112,7 +115,12 @@ tmux list-sessions;
 
 
 # all done - time for testing the analysis library...
-cd IntegrationTesting/;
+
+pwd;
+#cd ../; 
+#cd IntegrationTesting/;
+mv VyPR-analysis VyPRAnalysis
+#mv VyPR-server VyPRServer
 python run_tests.py;
 echo "Testing finished.";
 

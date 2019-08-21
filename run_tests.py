@@ -82,7 +82,7 @@ class test_http_request_methods(unittest.TestCase):
 
     def test_init(self):
         self.assertTrue(isinstance(analysis.http_request(1),analysis.http_request))
-        self.assertTrue(isinstance(analysis.http_request(time_of_request='2019-08-15T15:49:28.610874'),analysis.http_request))
+        self.assertTrue(isinstance(analysis.http_request(time_of_request=analysis.http_request(1).time_of_request),analysis.http_request))
 
     def test_get_calls(self):
         self.assertEqual(analysis.http_request(1).get_calls()[0].id,1)
@@ -131,8 +131,8 @@ class test_observation_methods(unittest.TestCase):
         self.assertEqual()"""
 
     def test_verdict_severity(self):
-        self.assertAlmostEqual(analysis.observation(1).verdict_severity(),-0.102061)
-        self.assertEqual(analysis.observation(3).verdict_severity(),9e-06)
+        self.assertAlmostEqual(analysis.observation(1).verdict_severity(),1-float(analysis.observation(1).observed_value))
+        self.assertAlmostEqual(analysis.observation(3).verdict_severity(),float(analysis.observation(3).observed_value))
 
     def test_get_instrumentation_point(self):
         self.assertEqual(analysis.observation(1).get_instrumentation_point().id,1)
